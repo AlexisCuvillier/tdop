@@ -1,13 +1,11 @@
-.PHONY: all clean fclean tests_run
-
 all:
-    @echo "Compilation simulée"
+		gcc -o app main.c
 
 clean:
-    @echo "Nettoyage léger"
+		rm -f *.o
 
 fclean: clean
-    @echo "Nettoyage complet (simulé)"
+		rm -f app
 
 tests_run:
-    @echo "Exécution des tests (simulé)"
+		./app --testapp
