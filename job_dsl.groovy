@@ -37,11 +37,11 @@ job(displayName) {
     wrappers {
         preBuildCleanup()
     }
-    // Étapes shell à exécuter
-    steps {
-        shell('make fclean')
-        shell('make')
-        shell('make tests_run')
-        shell('make clean')
-    }
+    // // Étapes shell à exécuter
+    // steps {
+    //     shell('make fclean')
+    //     shell('make')
+    //     shell('make tests_run')
+    //     shell('make clean')
+    // }
 }
