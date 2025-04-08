@@ -28,6 +28,8 @@ jenkins:
               - "Overall/Administer"
           - name: ape
             description: "Pedagogical team member"
+            entries:
+              - user: i_dont_know
             permissions:
               - "Overall/Read"
               - "Job/Build"
@@ -35,6 +37,8 @@ jenkins:
               - "Job/Workspace"
           - name: gorilla
             description: "Group Obsessively Researching Innovation Linked to Learning and Accomplishment"
+            entries:
+              - user: vaugie_g
             permissions:
               - "Overall/Read"
               - "Job/Build"
@@ -46,31 +50,20 @@ jenkins:
               - "Job/Workspace"
           - name: assist
             description: "Assistant"
+            entries:
+              - user: nasso
             permissions:
               - "Overall/Read"
               - "Job/Read"
               - "Job/Workspace"
 jobs:
-  - script: >
+  - script: |
+      // Crée le dossier "Tools" pour que son chemin soit reconnu
       folder('Tools') {
           description('Folder for miscellaneous tools.')
       }
-  - script: >
-      job('Tools/clone-repository') {
-          parameters {
-              stringParam('GIT_REPOSITORY_URL', '', 'Git URL of the repository to clone')
-          }
-          wrappers {
-              preBuildCleanup()
-          }
-          steps {
-              shell('rm -rf * && git clone ${GIT_REPOSITORY_URL}')
-          }
-          triggers {
-              // Aucun déclenchement automatique : manuel uniquement
-          }
-      }
-  - script: >
+
+      // Crée un job nommé "Tools/SEED" qui va charger le fichier Groovy externe
       job('Tools/SEED') {
           parameters {
               stringParam('GITHUB_NAME', '', 'GitHub repository owner/repo_name')
@@ -80,13 +73,11 @@ jobs:
               preBuildCleanup()
           }
           steps {
-              shell('cp /usr/share/jenkins/ref/job_dsl.groovy .')
-              // L'étape DSL permet de charger le script externe job_dsl.groovy
               dsl {
+                  // C'est ici qu'on fait référence au fichier Groovy
                   external('job_dsl.groovy')
+                  // Optionnel, pour désactiver la sandbox :
+                  // useScriptSecurity(false)
               }
-          }
-          triggers {
-              // Vous pouvez ajouter un déclencheur manuel ou SCM polling si nécessaire
           }
       }

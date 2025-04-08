@@ -1,47 +1,36 @@
-// Récupération des paramètres passés au job SEED
-def githubName = binding.variables['GITHUB_NAME']
-def displayName = binding.variables['DISPLAY_NAME']
-
-println "GITHUB_NAME: ${githubName}"
-println "DISPLAY_NAME: ${displayName}"
-
-// Génération du lien GitHub et du repository SCM à partir du nom
-def githubUrl = "https://github.com/${githubName}.git"
-def projectUrl = "https://github.com/${githubName}"
-
-// Création du job
-job(displayName) {
-    description("Job auto-généré pour ${githubName}")
-
-    // Lien vers le projet GitHub
-    properties {
-        githubProjectUrl(projectUrl)
+// Création du dossier "Tools"
+folder('Tools') {
+    description('Folder for miscellaneous tools.')
+}
+// Création du job "SEED" dans le dossier "Tools"
+// Ce job délègue la création d'autres jobs via un script DSL externe.
+job('Tools/SEED') {
+    parameters {
+        stringParam('GITHUB_NAME', '', 'GitHub repository owner/repo_name')
+        stringParam('DISPLAY_NAME', '', 'Display name for the job')
     }
-
-    // Configuration SCM Git
-    scm {
-        git {
-            remote {
-                url(githubUrl)
-            }
-            branches('*/main')
-        }
-    }
-
-    // Déclencheurs
-    triggers {
-        scm('* * * * *') // Toutes les minutes
-    }
-
-    // Nettoyage du workspace avant build
     wrappers {
         preBuildCleanup()
     }
-    // // Étapes shell à exécuter
-    // steps {
-    //     shell('make fclean')
-    //     shell('make')
-    //     shell('make tests_run')
-    //     shell('make clean')
-    // }
+    steps {
+        dsl {
+            // Appelle le script externe pour générer d'autres jobs.
+            external('job_dsl.groovy')
+            // Optionnel: désactive la sandbox (attention aux risques de sécurité)
+            useScriptSecurity(false)
+        }
+    }
+}
+
+// Création du job "clone-repository" dans le dossier "Tools"
+job('Tools/clone-repository') {
+    parameters {
+        stringParam('GIT_REPOSITORY_URL', '', 'Git URL of the repository to clone')
+    }
+    wrappers {
+        preBuildCleanup()
+    }
+    steps {
+        shell("rm -rf * && git clone ${GIT_REPOSITORY_URL}")
+    }
 }
