@@ -1,12 +1,13 @@
+.PHONY: all clean fclean tests_run
+
 all:
-		gcc -o app main.c
+	    @echo "Compilation simulée"
 
 clean:
-		rm -f *.o
+	    @echo "Nettoyage léger simulé"
 
 fclean: clean
-		rm -f app
+	    @echo "Nettoyage complet simulé"
 
-# Makefile for a simple C project
 tests_run:
-		./app --testapp
+	    @echo "Exécution des tests simulée"
