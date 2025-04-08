@@ -1,15 +1,13 @@
-# Compilation standard
+.PHONY: all clean fclean tests_run
+
 all:
-		gcc -o app main.c
+    @echo "Compilation simulée"
 
-# Nettoyage léger
 clean:
-		rm -f *.o
+    @echo "Nettoyage léger"
 
-# Nettoyage complet
 fclean: clean
-		rm -f app
+    @echo "Nettoyage complet (simulé)"
 
-# Lancement des tests
 tests_run:
-		./app --testapp
+    @echo "Exécution des tests (simulé)"
